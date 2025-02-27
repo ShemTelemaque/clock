@@ -1,0 +1,33 @@
+app-id: com.desktop.clock
+runtime: org.freedesktop.Platform
+runtime-version: '22.08'
+sdk: org.freedesktop.Sdk
+command: desktop_clock
+finish-args:
+  - --share=ipc
+  - --socket=fallback-x11
+  - --socket=wayland
+  - --device=dri
+  - --share=network
+modules:
+  - name: desktop_clock
+    buildsystem: simple
+    build-commands:
+      - flutter config --enable-linux-desktop
+      - flutter build linux --release
+      - install -D build/linux/x64/release/bundle/desktop_clock /app/bin/desktop_clock
+      - install -D build/linux/x64/release/bundle/lib /app/lib/
+      - install -D build/linux/x64/release/bundle/data /app/data/
+    sources:
+      - type: dir
+        path: .
+    modules:
+      - name: flutter-sdk
+        buildsystem: simple
+        build-commands:
+          - cp -r . /app/flutter
+          - chmod +x /app/flutter/bin/flutter
+        sources:
+          - type: git
+            url: https://github.com/flutter/flutter.git
+            tag: 3.10.0
